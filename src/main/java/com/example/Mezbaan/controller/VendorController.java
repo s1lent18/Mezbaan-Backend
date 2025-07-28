@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +44,32 @@ public class VendorController {
             Map<String, String> response = new HashMap<>();
             response.put("Message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody VendorService.VendorSignInRequest request) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+
+            VendorService.VendorResponse getResponse = vendorService.getVendor(request);
+
+            getResponse.token = jwtUtil.generateToken(userDetails);
+
+            Map<String, VendorService.VendorResponse> response = new HashMap<>();
+            response.put("vendorData", getResponse);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            Map<String, VendorService.VendorResponse> response = new HashMap<>();
+
+            return ResponseEntity.badRequest().body(e);
         }
     }
 }

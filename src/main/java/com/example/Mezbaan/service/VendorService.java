@@ -85,4 +85,16 @@ public class VendorService {
                 savedVendor.getStatus()
         );
     }
+
+    public VendorResponse getVendor(VendorSignInRequest request) {
+        Vendor vendor = vendorRepository.findByEmail(request.email).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+
+        return new VendorResponse(
+                vendor.getEmail(),
+                vendor.getImage(),
+                vendor.getName(),
+                vendor.getType(),
+                vendor.getStatus()
+        );
+    }
 }
