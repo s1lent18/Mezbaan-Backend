@@ -5,6 +5,7 @@ import com.example.Mezbaan.database.repository.UsersRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +17,31 @@ public class UserService {
     @Autowired
     UsersRepository usersRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Getter @Setter
-    public static class UserSignInRequest {
+    public static class UserSignUpRequest {
         public String email;
         public String name;
         public String image;
         public String password;
 
-        public UserSignInRequest(String email, String name, String image, String password) {
+        public UserSignUpRequest(String email, String name, String image, String password) {
             this.email = email;
             this.name = name;
             this.image = image;
+            this.password = password;
+        }
+    }
+
+    @Getter @Setter
+    public static class UserSignInRequest {
+        public String email;
+        public String password;
+
+        public UserSignInRequest(String email, String password) {
+            this.email = email;
             this.password = password;
         }
     }
@@ -38,6 +53,7 @@ public class UserService {
         public String email;
         public String name;
         public String image;
+        public String token;
 
         public UserSignInResponse(String email, String name, String image, Integer id, Timestamp createdAt) {
             this.email = email;
@@ -49,7 +65,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserSignInResponse addUser(UserSignInRequest request) {
+    public UserSignInResponse addUser(UserSignUpRequest request) {
 
         if (usersRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("User already exists");
@@ -59,12 +75,26 @@ public class UserService {
 
         Users savedUser = usersRepository.save(user);
 
+        savedUser.setPassword(passwordEncoder.encode(savedUser.getPassword()));
+
         return new UserSignInResponse(
             savedUser.getEmail(),
             savedUser.getName(),
             savedUser.getImage(),
             savedUser.getId(),
             savedUser.getCreatedAt()
+        );
+    }
+
+    public UserSignInResponse getUser(String email) {
+        Users user = usersRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        return new UserSignInResponse(
+                user.getEmail(),
+                user.getName(),
+                user.getImage(),
+                user.getId(),
+                user.getCreatedAt()
         );
     }
 }

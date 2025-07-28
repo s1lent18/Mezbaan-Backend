@@ -30,8 +30,8 @@ public class Users {
 
     public Users(String email, String image, String name, String password) {
         this.email = email;
-        this.name = name;
         this.image = image;
+        this.name = name;
         this.password = password;
     }
 
