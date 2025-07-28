@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter @Setter
 @Entity
@@ -29,6 +30,9 @@ public class Vendor {
     private String status;
 
     private String type;
+
+    @OneToMany(mappedBy = "vendors", cascade = CascadeType.ALL)
+    private List<Venues> venues;
 
     public Vendor() {};
 

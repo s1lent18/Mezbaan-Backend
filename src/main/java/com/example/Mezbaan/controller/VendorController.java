@@ -1,7 +1,6 @@
 package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
-import com.example.Mezbaan.service.UserService;
 import com.example.Mezbaan.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,7 +68,7 @@ public class VendorController {
 
             Map<String, VendorService.VendorResponse> response = new HashMap<>();
 
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }
