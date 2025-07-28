@@ -1,9 +1,9 @@
 package com.example.Mezbaan.database.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ManyToAny;
 
 @Getter @Setter
 @Entity
@@ -53,15 +53,18 @@ public class Venues {
 
     @ManyToOne
     @JoinColumn(name = "vendorid", nullable = false)
-    private Integer vendorId;
+    @JsonBackReference
+    private Vendor vendor;
 
-    public Venues(String name, String description, String address, Integer baseGuestCount, String venueType, Integer priceDay,
+    public Venues(Vendor vendor, String name, String description, String address, Integer baseGuestCount, Integer capacity, String venueType, Integer priceDay,
                   Integer priceNight, Integer incStep, Integer incPrice, String locationLink, String managerName, String managerNumber
     ) {
+        this.vendor = vendor;
         this.name = name;
         this.description = description;
         this.address = address;
         this.baseGuestCount = baseGuestCount;
+        this.capacity = capacity;
         this.venueType = venueType;
         this.priceDay = priceDay;
         this.priceNight = priceNight;

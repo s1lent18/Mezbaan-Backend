@@ -1,5 +1,6 @@
 package com.example.Mezbaan.database.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +32,8 @@ public class Vendor {
 
     private String type;
 
-    @OneToMany(mappedBy = "vendors", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Venues> venues;
 
     public Vendor() {};

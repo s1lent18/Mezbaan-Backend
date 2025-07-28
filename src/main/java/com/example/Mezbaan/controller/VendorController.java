@@ -2,9 +2,11 @@ package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.service.VendorService;
+import com.example.Mezbaan.service.VenuesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +28,9 @@ public class VendorController {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    VenuesService venuesService;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -69,6 +74,22 @@ public class VendorController {
             Map<String, VendorService.VendorResponse> response = new HashMap<>();
 
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/addVenue")
+    @PreAuthorize("hasAuthority('VENDORS')")
+    public ResponseEntity<?> addVenue(@RequestBody VenuesService.AddVenue request) {
+        try {
+            VenuesService.AddVenue venue = venuesService.addVenue(request);
+
+            Map<String, VenuesService.AddVenue> response = new HashMap<>();
+
+            response.put("venue", venue);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
