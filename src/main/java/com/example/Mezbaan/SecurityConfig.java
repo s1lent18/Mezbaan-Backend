@@ -45,8 +45,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/login", "/users/signUp").permitAll()
+                        .requestMatchers("/users/login", "/users/signUp", "/vendors/signUp", "/vendors/login").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("USERS")
+                        .requestMatchers("/vendors/**").hasAnyAuthority("VENDORS")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

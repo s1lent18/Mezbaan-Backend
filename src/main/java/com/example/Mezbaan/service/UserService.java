@@ -77,6 +77,8 @@ public class UserService {
 
         savedUser.setPassword(passwordEncoder.encode(savedUser.getPassword()));
 
+        usersRepository.save(savedUser);
+
         return new UserSignInResponse(
             savedUser.getEmail(),
             savedUser.getName(),
