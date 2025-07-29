@@ -36,7 +36,9 @@ public class Vendor {
     @JsonManagedReference
     private List<Venues> venues;
 
-    public Vendor() {};
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Photographers> photographers;
 
     public Vendor(String email, String image, String name, String password, String type) {
         this.email = email;
