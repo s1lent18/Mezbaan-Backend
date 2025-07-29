@@ -1,10 +1,16 @@
 package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
+import com.example.Mezbaan.database.models.Photographers;
+import com.example.Mezbaan.database.repository.PhotographersRepository;
 import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
 import com.example.Mezbaan.service.VenuesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,10 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +38,9 @@ public class VendorController {
 
     @Autowired
     PhotographersService photographersService;
+
+    @Autowired
+    PhotographersRepository photographersRepository;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -111,5 +117,22 @@ public class VendorController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/getPhotographer")
+    public ResponseEntity<Map<String, Object>> getPhotographers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Photographers> photographersPage = photographersRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("photographer", photographersPage.getContent());
+        response.put("currentPage", photographersPage.getNumber());
+        response.put("totalItems", photographersPage.getTotalElements());
+        response.put("totalPages", photographersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 }
