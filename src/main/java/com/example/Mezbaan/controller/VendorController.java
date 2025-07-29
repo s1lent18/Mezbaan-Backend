@@ -2,7 +2,9 @@ package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.Photographers;
+import com.example.Mezbaan.database.models.Venues;
 import com.example.Mezbaan.database.repository.PhotographersRepository;
+import com.example.Mezbaan.database.repository.VenuesRepository;
 import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
 import com.example.Mezbaan.service.VenuesService;
@@ -41,6 +43,9 @@ public class VendorController {
 
     @Autowired
     PhotographersRepository photographersRepository;
+
+    @Autowired
+    VenuesRepository venuesRepository;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -83,7 +88,7 @@ public class VendorController {
 
             Map<String, VendorService.VendorResponse> response = new HashMap<>();
 
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(e);
         }
     }
 
@@ -132,6 +137,23 @@ public class VendorController {
         response.put("currentPage", photographersPage.getNumber());
         response.put("totalItems", photographersPage.getTotalElements());
         response.put("totalPages", photographersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getVenues")
+    public ResponseEntity<Map<String, Object>> getVenues(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Venues> venuesPage = venuesRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("venues", venuesPage.getContent());
+        response.put("currentPage", venuesPage.getNumber());
+        response.put("totalItems", venuesPage.getTotalElements());
+        response.put("totalPages", venuesPage.getTotalPages());
 
         return ResponseEntity.ok(response);
     }

@@ -40,6 +40,8 @@ public class Vendor {
     @JsonManagedReference
     private List<Photographers> photographers;
 
+    public Vendor() {}
+
     public Vendor(String email, String image, String name, String password, String type) {
         this.email = email;
         this.image = image;

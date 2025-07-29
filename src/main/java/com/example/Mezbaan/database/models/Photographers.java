@@ -41,6 +41,8 @@ public class Photographers {
     @JsonBackReference
     private Vendor vendor;
 
+    public Photographers() {};
+
     public Photographers(
             String name, String description, String instaLink, String facebookLink, String email,
             String contactNumber, Integer cost, Integer teamSize

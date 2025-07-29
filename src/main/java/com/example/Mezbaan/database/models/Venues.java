@@ -56,6 +56,8 @@ public class Venues {
     @JsonBackReference
     private Vendor vendor;
 
+    public Venues() {};
+
     public Venues(Vendor vendor, String name, String description, String address, Integer baseGuestCount, Integer capacity, String venueType, Integer priceDay,
                   Integer priceNight, Integer incStep, Integer incPrice, String locationLink, String managerName, String managerNumber
     ) {
