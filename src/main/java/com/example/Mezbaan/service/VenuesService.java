@@ -56,7 +56,7 @@ public class VenuesService {
     }
 
     @Transactional
-    public AddVenue addVenue(AddVenue request) {
+    public String addVenue(AddVenue request) {
 
         Vendor vendor = vendorRepository.findById(request.vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
 
@@ -77,23 +77,8 @@ public class VenuesService {
             request.managerNumber
         );
 
-        Venues savedVenue = venuesRepository.save(venue);
+        venuesRepository.save(venue);
 
-        return new AddVenue(
-            savedVenue.getVendor().getId(),
-            savedVenue.getName(),
-            savedVenue.getDescription(),
-            savedVenue.getAddress(),
-            savedVenue.getBaseGuestCount(),
-            savedVenue.getCapacity(),
-            savedVenue.getVenueType(),
-            savedVenue.getPriceDay(),
-            savedVenue.getPriceNight(),
-            savedVenue.getIncStep(),
-            savedVenue.getIncPrice(),
-            savedVenue.getLocationLink(),
-            savedVenue.getManagerName(),
-            savedVenue.getManagerNumber()
-        );
+        return "Successfully Added Venue";
     }
 }

@@ -40,4 +40,19 @@ public class Photographers {
     @JoinColumn(name = "vendorid", nullable = false)
     @JsonBackReference
     private Vendor vendor;
+
+    public Photographers(
+            String name, String description, String instaLink, String facebookLink, String email,
+            String contactNumber, Integer cost, Integer teamSize
+    ) {
+        this.name = name;
+        this.description = description;
+        this.instaLink = instaLink;
+        this.facebookLink = facebookLink;
+        this.email = email;
+        this.contactNumber = contactNumber;
+        this.cost = cost;
+        this.teamSize = teamSize;
+        this.rating = 0.0;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
+import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
 import com.example.Mezbaan.service.VenuesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class VendorController {
 
     @Autowired
     VenuesService venuesService;
+
+    @Autowired
+    PhotographersService photographersService;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -81,11 +85,27 @@ public class VendorController {
     @PreAuthorize("hasAuthority('VENDORS')")
     public ResponseEntity<?> addVenue(@RequestBody VenuesService.AddVenue request) {
         try {
-            VenuesService.AddVenue venue = venuesService.addVenue(request);
+            String venue = venuesService.addVenue(request);
 
-            Map<String, VenuesService.AddVenue> response = new HashMap<>();
+            Map<String, String> response = new HashMap<>();
 
-            response.put("venue", venue);
+            response.put("response", venue);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/addPhotographer")
+    @PreAuthorize("hasAuthority('VENDORS')")
+    public ResponseEntity<?> addPhotographer(@RequestBody PhotographersService.AddPhotographers request) {
+        try {
+            String photographer = photographersService.addPhotographer(request);
+
+            Map<String, String> response = new HashMap<>();
+
+            response.put("response", photographer);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
