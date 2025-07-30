@@ -1,5 +1,6 @@
 package com.example.Mezbaan.service;
 
+import com.example.Mezbaan.database.models.Status;
 import com.example.Mezbaan.database.models.Users;
 import com.example.Mezbaan.database.repository.UsersRepository;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -98,5 +100,22 @@ public class UserService {
                 user.getId(),
                 user.getCreatedAt()
         );
+    }
+
+    public void saveUser(Users user) {
+        user.setStatus(Status.ONLINE);
+        usersRepository.save(user);
+    }
+
+    public void disconnect(Users user) {
+        var storedUser = usersRepository.findById(user.getId()).orElse(null);
+        if (storedUser != null) {
+            storedUser.setStatus(Status.OFFLINE);
+            usersRepository.save(storedUser);
+        }
+    }
+
+    public List<Users> findConnectedUsers() {
+        return usersRepository.findAllByStatus(Status.ONLINE);
     }
 }

@@ -28,6 +28,9 @@ public class Users {
 
     public Users() {};
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     public Users(String email, String image, String name, String password) {
         this.email = email;
         this.image = image;

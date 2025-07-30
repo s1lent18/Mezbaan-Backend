@@ -32,6 +32,10 @@ public class Vendor {
 
     private String type;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "chatstatus")
+    private Status chatStatus;
+
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Venues> venues;
