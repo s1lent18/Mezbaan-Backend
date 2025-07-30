@@ -2,6 +2,8 @@ package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.Photographers;
+import com.example.Mezbaan.database.models.Status;
+import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.models.Venues;
 import com.example.Mezbaan.database.repository.PhotographersRepository;
 import com.example.Mezbaan.database.repository.VenuesRepository;
@@ -15,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -88,7 +93,7 @@ public class VendorController {
 
             Map<String, VendorService.VendorResponse> response = new HashMap<>();
 
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
@@ -157,4 +162,19 @@ public class VendorController {
 
         return ResponseEntity.ok(response);
     }
+
+    @MessageMapping("/vendor.addVendor")
+    @SendTo("/vendor/public")
+    public Vendor addVendor(@Payload Vendor vendor) {
+        vendor.setChatStatus(Status.ONLINE);
+        return vendor;
+    }
+
+    @MessageMapping("/vendor.disconnectVendor")
+    @SendTo("/vendor/public")
+    public Vendor disconnectVendor(@Payload Vendor vendor) {
+        vendor.setChatStatus(Status.OFFLINE);
+        return vendor;
+    }
+
 }

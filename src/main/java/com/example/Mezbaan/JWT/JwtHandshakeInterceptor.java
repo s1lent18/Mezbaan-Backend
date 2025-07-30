@@ -18,7 +18,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     private JwtUtil jwtUtils;
 
     @Override
-    public boolean beforeHandshake(@NonNull org.springframework.http.server.ServerHttpRequest request,@NonNull org.springframework.http.server.ServerHttpResponse response,@NonNull WebSocketHandler wsHandler,@NonNull Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(@NonNull org.springframework.http.server.ServerHttpRequest request,@NonNull org.springframework.http.server.ServerHttpResponse response,@NonNull WebSocketHandler wsHandler,@NonNull Map<String, Object> attributes) {
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
 
