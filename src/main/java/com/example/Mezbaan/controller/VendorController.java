@@ -1,12 +1,11 @@
 package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
-import com.example.Mezbaan.database.models.Photographers;
-import com.example.Mezbaan.database.models.Status;
-import com.example.Mezbaan.database.models.Vendor;
-import com.example.Mezbaan.database.models.Venues;
+import com.example.Mezbaan.database.models.*;
+import com.example.Mezbaan.database.repository.CaterersRepository;
 import com.example.Mezbaan.database.repository.PhotographersRepository;
 import com.example.Mezbaan.database.repository.VenuesRepository;
+import com.example.Mezbaan.service.CaterersService;
 import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
 import com.example.Mezbaan.service.VenuesService;
@@ -51,6 +50,12 @@ public class VendorController {
 
     @Autowired
     VenuesRepository venuesRepository;
+
+    @Autowired
+    CaterersService caterersService;
+
+    @Autowired
+    CaterersRepository caterersRepository;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -127,6 +132,39 @@ public class VendorController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("/addCaterer")
+    @PreAuthorize("hasAuthority('VENDORS')")
+    public ResponseEntity<?> addCaterer(@RequestBody CaterersService.AddCaterer request) {
+        try {
+            String caterer = caterersService.addCaterer(request);
+
+            Map<String, String> response = new HashMap<>();
+
+            response.put("response", caterer);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/getCaterer")
+    public ResponseEntity<Map<String, Object>> getCaterer(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Caterers> caterersPage = caterersRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("caterer", caterersPage.getContent());
+        response.put("currentPage", caterersPage.getNumber());
+        response.put("totalItems", caterersPage.getTotalElements());
+        response.put("totalPages", caterersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getPhotographer")
