@@ -44,6 +44,10 @@ public class Vendor {
     @JsonManagedReference
     private List<Photographers> photographers;
 
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Caterers> caterers;
+
     public Vendor() {}
 
     public Vendor(String email, String image, String name, String password, String type) {
