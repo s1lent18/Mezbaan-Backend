@@ -10,10 +10,6 @@ import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
 import com.example.Mezbaan.service.VenuesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -46,16 +42,16 @@ public class VendorController {
     PhotographersService photographersService;
 
     @Autowired
-    PhotographersRepository photographersRepository;
+    CaterersService caterersService;
+
+    @Autowired
+    CaterersRepository caterersRepository;
 
     @Autowired
     VenuesRepository venuesRepository;
 
     @Autowired
-    CaterersService caterersService;
-
-    @Autowired
-    CaterersRepository caterersRepository;
+    PhotographersRepository photographersRepository;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -150,57 +146,6 @@ public class VendorController {
         }
     }
 
-    @GetMapping("/getCaterer")
-    public ResponseEntity<Map<String, Object>> getCaterer(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<Caterers> caterersPage = caterersRepository.findAll(pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("caterer", caterersPage.getContent());
-        response.put("currentPage", caterersPage.getNumber());
-        response.put("totalItems", caterersPage.getTotalElements());
-        response.put("totalPages", caterersPage.getTotalPages());
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/getPhotographer")
-    public ResponseEntity<Map<String, Object>> getPhotographers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<Photographers> photographersPage = photographersRepository.findAll(pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("photographer", photographersPage.getContent());
-        response.put("currentPage", photographersPage.getNumber());
-        response.put("totalItems", photographersPage.getTotalElements());
-        response.put("totalPages", photographersPage.getTotalPages());
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/getVenues")
-    public ResponseEntity<Map<String, Object>> getVenues(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<Venues> venuesPage = venuesRepository.findAll(pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("venues", venuesPage.getContent());
-        response.put("currentPage", venuesPage.getNumber());
-        response.put("totalItems", venuesPage.getTotalElements());
-        response.put("totalPages", venuesPage.getTotalPages());
-
-        return ResponseEntity.ok(response);
-    }
-
     @MessageMapping("/vendor.addVendor")
     @SendTo("/vendor/public")
     public Vendor addVendor(@Payload Vendor vendor) {
@@ -215,4 +160,83 @@ public class VendorController {
         return vendor;
     }
 
+    @DeleteMapping("/caterer/{id}")
+    public ResponseEntity<Map<String, String>> deleteCaterer(@PathVariable Integer id) {
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            if (!caterersRepository.existsById(id)) {
+
+                response.put("message", "Caterer with ID " + id + " not found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(response);
+            }
+
+            response.put("message", "Caterer deleted successfully");
+
+            caterersRepository.deleteById(id);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+
+            response.put("message", "Failed to delete caterer");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
+
+    @DeleteMapping("/venues/{id}")
+    public ResponseEntity<Map<String, String>> deleteVenues(@PathVariable Integer id) {
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            if (!venuesRepository.existsById(id)) {
+                response.put("message", "Venue with ID " + id + " not found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(response);
+            }
+
+            response.put("message", "Venue deleted successfully");
+
+            venuesRepository.deleteById(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+
+            response.put("message", "Failed to delete venue");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
+
+    @DeleteMapping("/photographer/{id}")
+    public ResponseEntity<Map<String, String>> deletePhotographer(@PathVariable Integer id) {
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            if (!photographersRepository.existsById(id)) {
+                response.put("message", "Photographer with ID " + id + " not found");
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(response);
+            }
+
+            response.put("message", "Photographer deleted successfully");
+
+            photographersRepository.deleteById(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+
+            response.put("message", "Failed to delete Photographer");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
 }
