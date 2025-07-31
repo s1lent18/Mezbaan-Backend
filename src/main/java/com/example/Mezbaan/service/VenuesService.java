@@ -1,5 +1,6 @@
 package com.example.Mezbaan.service;
 
+import com.example.Mezbaan.database.models.Photographers;
 import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.models.Venues;
 import com.example.Mezbaan.database.repository.VendorRepository;
@@ -7,6 +8,9 @@ import com.example.Mezbaan.database.repository.VenuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class VenuesService {
@@ -80,5 +84,22 @@ public class VenuesService {
         venuesRepository.save(venue);
 
         return "Successfully Added Venue";
+    }
+
+    @Transactional
+    public String deleteVenue(Integer id, Integer vendorId) {
+
+        Vendor vendor = vendorRepository.findById(vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+
+        List<Venues> venues = vendor.getVenues();
+
+        for (Venues venue : venues) {
+            if (Objects.equals(venue.getId(), id)) {
+                venuesRepository.delete(venue);
+                return "Successfully Deleted Venue";
+            }
+        }
+
+        return "No Venue Found";
     }
 }

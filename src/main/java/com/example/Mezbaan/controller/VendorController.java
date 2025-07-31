@@ -2,9 +2,6 @@ package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.*;
-import com.example.Mezbaan.database.repository.CaterersRepository;
-import com.example.Mezbaan.database.repository.PhotographersRepository;
-import com.example.Mezbaan.database.repository.VenuesRepository;
 import com.example.Mezbaan.service.CaterersService;
 import com.example.Mezbaan.service.PhotographersService;
 import com.example.Mezbaan.service.VendorService;
@@ -43,15 +40,6 @@ public class VendorController {
 
     @Autowired
     CaterersService caterersService;
-
-    @Autowired
-    CaterersRepository caterersRepository;
-
-    @Autowired
-    VenuesRepository venuesRepository;
-
-    @Autowired
-    PhotographersRepository photographersRepository;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -160,76 +148,56 @@ public class VendorController {
         return vendor;
     }
 
-    @DeleteMapping("/caterer/{id}")
-    public ResponseEntity<Map<String, String>> deleteCaterer(@PathVariable Integer id) {
+    @DeleteMapping("/caterer/{vendorId}/{id}")
+    public ResponseEntity<Map<String, String>> deleteCaterer(@PathVariable Integer id, @PathVariable Integer vendorId) {
 
         Map<String, String> response = new HashMap<>();
 
         try {
-            if (!caterersRepository.existsById(id)) {
+            String r = caterersService.deleteCaterer(id, vendorId);
 
-                response.put("message", "Caterer with ID " + id + " not found");
+            response.put("message", r);
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(response);
-            }
-
-            response.put("message", "Caterer deleted successfully");
-
-            caterersRepository.deleteById(id);
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
 
-            response.put("message", "Failed to delete caterer");
+            response.put("message", "Failed to delete Caterer");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
         }
     }
 
-    @DeleteMapping("/venues/{id}")
-    public ResponseEntity<Map<String, String>> deleteVenues(@PathVariable Integer id) {
+    @DeleteMapping("/venues/{vendorId}/{id}")
+    public ResponseEntity<Map<String, String>> deleteVenues(@PathVariable Integer id, @PathVariable Integer vendorId) {
 
         Map<String, String> response = new HashMap<>();
 
         try {
-            if (!venuesRepository.existsById(id)) {
-                response.put("message", "Venue with ID " + id + " not found");
+            String r = venuesService.deleteVenue(id, vendorId);
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(response);
-            }
+            response.put("message", r);
 
-            response.put("message", "Venue deleted successfully");
-
-            venuesRepository.deleteById(id);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
 
-            response.put("message", "Failed to delete venue");
+            response.put("message", "Failed to delete Venue");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
         }
     }
 
-    @DeleteMapping("/photographer/{id}")
-    public ResponseEntity<Map<String, String>> deletePhotographer(@PathVariable Integer id) {
+    @DeleteMapping("/photographer/{vendorId}/{id}")
+    public ResponseEntity<Map<String, String>> deletePhotographer(@PathVariable Integer id, @PathVariable Integer vendorId) {
 
         Map<String, String> response = new HashMap<>();
 
         try {
-            if (!photographersRepository.existsById(id)) {
-                response.put("message", "Photographer with ID " + id + " not found");
+            String r = photographersService.deletePhotographer(id, vendorId);
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(response);
-            }
+            response.put("message", r);
 
-            response.put("message", "Photographer deleted successfully");
-
-            photographersRepository.deleteById(id);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
 

@@ -1,11 +1,16 @@
 package com.example.Mezbaan.service;
 
 import com.example.Mezbaan.database.models.Caterers;
+import com.example.Mezbaan.database.models.Photographers;
 import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.repository.CaterersRepository;
 import com.example.Mezbaan.database.repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CaterersService {
@@ -34,6 +39,7 @@ public class CaterersService {
         }
     }
 
+    @Transactional
     public String addCaterer(AddCaterer request) {
         vendorRepository.findById(request.vendor.getId()).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
 
@@ -48,6 +54,23 @@ public class CaterersService {
         caterersRepository.save(caterer);
 
         return "Successfully Added Caterer";
+    }
+
+    @Transactional
+    public String deleteCaterer(Integer id, Integer vendorId) {
+
+        Vendor vendor = vendorRepository.findById(vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+
+        List<Caterers> caterers = vendor.getCaterers();
+
+        for (Caterers caterer : caterers) {
+            if (Objects.equals(caterer.getId(), id)) {
+                caterersRepository.delete(caterer);
+                return "Successfully Deleted Caterer";
+            }
+        }
+
+        return "No Caterer Found";
     }
 
 }

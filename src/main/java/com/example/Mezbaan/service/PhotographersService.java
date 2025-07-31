@@ -6,6 +6,10 @@ import com.example.Mezbaan.database.repository.PhotographersRepository;
 import com.example.Mezbaan.database.repository.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PhotographersService {
@@ -43,6 +47,7 @@ public class PhotographersService {
         }
     }
 
+    @Transactional
     public String addPhotographer(AddPhotographers request) {
         vendorRepository.findById(request.vendor.getId()).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
 
@@ -60,5 +65,22 @@ public class PhotographersService {
         photographersRepository.save(photographer);
 
         return "Successfully Added Photographer";
+    }
+
+    @Transactional
+    public String deletePhotographer(Integer id, Integer vendorId) {
+
+        Vendor vendor = vendorRepository.findById(vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+
+        List<Photographers> photographers = vendor.getPhotographers();
+
+        for (Photographers photographer : photographers) {
+            if (Objects.equals(photographer.getId(), id)) {
+                photographersRepository.delete(photographer);
+                return "Successfully Deleted Photographer";
+            }
+        }
+
+        return "No Photographer Found";
     }
 }
