@@ -1,6 +1,5 @@
 package com.example.Mezbaan.service;
 
-import com.example.Mezbaan.database.models.Photographers;
 import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.models.Venues;
 import com.example.Mezbaan.database.repository.VendorRepository;

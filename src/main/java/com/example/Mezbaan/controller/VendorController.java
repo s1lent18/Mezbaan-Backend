@@ -2,10 +2,7 @@ package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.*;
-import com.example.Mezbaan.service.CaterersService;
-import com.example.Mezbaan.service.PhotographersService;
-import com.example.Mezbaan.service.VendorService;
-import com.example.Mezbaan.service.VenuesService;
+import com.example.Mezbaan.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +37,9 @@ public class VendorController {
 
     @Autowired
     CaterersService caterersService;
+
+    @Autowired
+    DecoratorsService decoratorsService;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -91,6 +91,22 @@ public class VendorController {
     public ResponseEntity<?> addVenue(@RequestBody VenuesService.AddVenue request) {
         try {
             String venue = venuesService.addVenue(request);
+
+            Map<String, String> response = new HashMap<>();
+
+            response.put("response", venue);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/addDecorator")
+    @PreAuthorize("hasAuthority('VENDORS')")
+    public ResponseEntity<?> addDecorator(@RequestBody DecoratorsService.AddDecorator request) {
+        try {
+            String venue = decoratorsService.addDecorator(request);
 
             Map<String, String> response = new HashMap<>();
 
@@ -155,6 +171,26 @@ public class VendorController {
 
         try {
             String r = caterersService.deleteCaterer(id, vendorId);
+
+            response.put("message", r);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+
+            response.put("message", "Failed to delete Caterer");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+        }
+    }
+
+    @DeleteMapping("/decorator/{vendorId}/{id}")
+    public ResponseEntity<Map<String, String>> deleteDecorator(@PathVariable Integer id, @PathVariable Integer vendorId) {
+
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = decoratorsService.deleteDecorator(id, vendorId);
 
             response.put("message", r);
 

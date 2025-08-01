@@ -28,10 +28,15 @@ public class Amenities {
 
     public Amenities() {}
 
-    public Amenities(String name, Integer cost, Venues venue, Decorators decorator) {
+    public Amenities(String name, Integer cost, Venues venue) {
         this.name = name;
         this.cost = cost;
         this.venue = venue;
+    }
+
+    public Amenities(String name, Integer cost, Decorators decorator) {
+        this.name = name;
+        this.cost = cost;
         this.decorator = decorator;
     }
 }
