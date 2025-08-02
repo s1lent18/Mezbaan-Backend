@@ -60,7 +60,7 @@ public class Venues {
     private Vendor vendor;
 
     @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("venue-amenities")
     private List<Amenities> amenities;
 
     public Venues() {};

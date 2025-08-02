@@ -21,7 +21,7 @@ public class PhotographersService {
     VendorRepository vendorRepository;
 
     public static class AddPhotographers {
-        Vendor vendor;
+        Integer vendorId;
         String name;
         String description;
         String instaLink;
@@ -32,10 +32,10 @@ public class PhotographersService {
         Integer teamSize;
 
         public AddPhotographers(
-                Vendor vendor, String name, String description, String instaLink, String facebookLink, String email,
+                Integer vendorId, String name, String description, String instaLink, String facebookLink, String email,
                 String contactNumber, Integer cost, Integer teamSize
         ) {
-            this.vendor = vendor;
+            this.vendorId = vendorId;
             this.name = name;
             this.description = description;
             this.instaLink = instaLink;
@@ -49,7 +49,7 @@ public class PhotographersService {
 
     @Transactional
     public String addPhotographer(AddPhotographers request) {
-        vendorRepository.findById(request.vendor.getId()).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+        Vendor vendor = vendorRepository.findById(request.vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
 
         Photographers photographer = new Photographers(
                 request.name,
@@ -59,7 +59,8 @@ public class PhotographersService {
                 request.email,
                 request.contactNumber,
                 request.cost,
-                request.teamSize
+                request.teamSize,
+                vendor
         );
 
         photographersRepository.save(photographer);

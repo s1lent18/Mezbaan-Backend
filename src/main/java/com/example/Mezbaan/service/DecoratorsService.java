@@ -1,7 +1,6 @@
 package com.example.Mezbaan.service;
 
 import com.example.Mezbaan.database.models.Amenities;
-import com.example.Mezbaan.database.models.Caterers;
 import com.example.Mezbaan.database.models.Decorators;
 import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.repository.AmenitiesRepository;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,22 +27,20 @@ public class DecoratorsService {
     VendorRepository vendorRepository;
 
     public static class AddDecorator {
-        Vendor vendor;
+        Integer vendorId;
         String name;
         String managerName;
         String managerNumber;
-        Double rating;
         String coverImage;
         List<Amenities> amenities;
 
-        public AddDecorator(Vendor vendor, String name, String managerName, String managerNumber, Double rating,
+        public AddDecorator(Integer vendorId, String name, String managerName, String managerNumber,
                             String coverImage, List<Amenities> amenities
         ) {
-            this.vendor = vendor;
+            this.vendorId = vendorId;
             this.name = name;
             this.managerName = managerName;
             this.managerNumber = managerNumber;
-            this.rating = rating;
             this.coverImage = coverImage;
             this.amenities = amenities;
         }
@@ -50,18 +48,30 @@ public class DecoratorsService {
 
     @Transactional
     public String addDecorator(AddDecorator request) {
-        vendorRepository.findById(request.vendor.getId()).orElseThrow(() -> new RuntimeException("Vendor not Found"));
+        Vendor vendor = vendorRepository.findById(request.vendorId).orElseThrow(() -> new RuntimeException("Vendor not Found"));
+
+        List<Amenities> saveAmenities = new ArrayList<>();
 
         Decorators decorator = new Decorators(
                 request.name,
                 request.managerName,
                 request.managerNumber,
-                request.rating,
-                request.coverImage
+                request.coverImage,
+                vendor
         );
 
-        decoratorsRepository.save(decorator);
-        amenitiesRepository.saveAll(request.amenities);
+        Decorators savedDecorator = decoratorsRepository.save(decorator);
+
+        for (Amenities amenity : request.amenities) {
+            Amenities it = new Amenities(
+                    amenity.getName(),
+                    amenity.getCost(),
+                    savedDecorator
+            );
+            saveAmenities.add(it);
+        }
+
+        amenitiesRepository.saveAll(saveAmenities);
 
         return "Successfully Added Decorator";
     }

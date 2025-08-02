@@ -33,11 +33,12 @@ public class Caterers {
 
     public Caterers() {}
 
-    public Caterers(String name, String address, String locationLink, Double rating, String coverImage) {
+    public Caterers(Vendor vendor, String name, String address, String locationLink, Double rating, String coverImage) {
         this.name = name;
         this.address = address;
         this.locationLink = locationLink;
         this.rating = rating;
         this.coverImage = coverImage;
+        this.vendor = vendor;
     }
 }

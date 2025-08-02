@@ -1,9 +1,9 @@
 package com.example.Mezbaan.database.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 @Getter @Setter
 @Entity
@@ -12,7 +12,7 @@ public class Amenities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -20,10 +20,12 @@ public class Amenities {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venueid")
+    @JsonBackReference("venue-amenities")
     private Venues venue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "decoratorid")
+    @JsonBackReference("decorator-amenities")
     private Decorators decorator;
 
     public Amenities() {}

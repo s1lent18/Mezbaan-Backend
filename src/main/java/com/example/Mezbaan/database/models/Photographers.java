@@ -45,7 +45,7 @@ public class Photographers {
 
     public Photographers(
             String name, String description, String instaLink, String facebookLink, String email,
-            String contactNumber, Integer cost, Integer teamSize
+            String contactNumber, Integer cost, Integer teamSize, Vendor vendor
     ) {
         this.name = name;
         this.description = description;
@@ -56,5 +56,6 @@ public class Photographers {
         this.cost = cost;
         this.teamSize = teamSize;
         this.rating = 0.0;
+        this.vendor = vendor;
     }
 }

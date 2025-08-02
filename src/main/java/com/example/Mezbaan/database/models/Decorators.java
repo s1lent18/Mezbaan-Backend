@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -37,14 +36,15 @@ public class Decorators {
     private Vendor vendor;
 
     @OneToMany(mappedBy = "decorator", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("decorator-amenities")
     private List<Amenities> amenities;
 
-    public Decorators(String name, String managerName, String managerNumber, Double rating, String coverImage) {
+    public Decorators(String name, String managerName, String managerNumber, String coverImage, Vendor vendor) {
         this.name = name;
         this.managerName = managerName;
         this.managerNumber = managerNumber;
-        this.rating = rating;
+        this.rating = 0.0;
         this.coverImage = coverImage;
+        this.vendor = vendor;
     }
 }
