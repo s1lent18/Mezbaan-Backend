@@ -33,6 +33,8 @@ public class VenueBooking {
     @Column(name = "dateofevent")
     private String dateOfEvent;
 
+    private String status;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venueid", nullable = false)
     private Venues venue;
@@ -53,5 +55,6 @@ public class VenueBooking {
         this.dateOfEvent = dateOfEvent;
         this.venue = venue;
         this.customer = customer;
+        this.status = "Pending for Approval";
     }
 }

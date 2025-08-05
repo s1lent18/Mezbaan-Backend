@@ -2,8 +2,10 @@ package com.example.Mezbaan.service;
 
 import com.example.Mezbaan.database.models.Status;
 import com.example.Mezbaan.database.models.Users;
+import com.example.Mezbaan.database.models.VenueBooking;
 import com.example.Mezbaan.database.repository.UsersRepository;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,16 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Getter @Setter
+    @NoArgsConstructor
+    public static class GetAllBookingResponse {
+        List<VenueBooking> venueBookings;
+
+        GetAllBookingResponse(List<VenueBooking> venueBookings) {
+            this.venueBookings = venueBookings;
+        }
+    }
 
     @Getter @Setter
     public static class UserSignUpRequest {
@@ -117,5 +129,15 @@ public class UserService {
 
     public List<Users> findConnectedUsers() {
         return usersRepository.findAllByStatus(Status.ONLINE);
+    }
+
+    public GetAllBookingResponse getAllBookings(Integer userId) {
+        usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        List<VenueBooking> venueBookings = usersRepository.findAllVenueBookings(userId);
+
+        return new GetAllBookingResponse(
+                venueBookings
+        );
     }
 }

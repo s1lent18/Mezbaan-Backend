@@ -18,6 +18,10 @@ public class JwtUtil {
     @Value("${myapp.jwt.key}")
     private String secretKey;
 
+    public JwtUtil(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }

@@ -3,11 +3,13 @@ package com.example.Mezbaan.database.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter
 @Entity
 @Table(name = "items")
+@NoArgsConstructor
 public class Items {
 
     @Id
@@ -27,8 +29,6 @@ public class Items {
     @JoinColumn(name = "catererid", nullable = false)
     @JsonBackReference
     private Caterers caterer;
-
-    public Items() {}
 
     public Items(String name, Integer cost, String type, String coverImage, Caterers caterer) {
         this.name = name;

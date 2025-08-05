@@ -1,14 +1,10 @@
 package com.example.Mezbaan.controller;
 
 import com.example.Mezbaan.JWT.JwtUtil;
-import com.example.Mezbaan.database.models.Caterers;
-import com.example.Mezbaan.database.models.Photographers;
-import com.example.Mezbaan.database.models.Users;
-import com.example.Mezbaan.database.models.Venues;
-import com.example.Mezbaan.database.repository.CaterersRepository;
-import com.example.Mezbaan.database.repository.PhotographersRepository;
-import com.example.Mezbaan.database.repository.VenuesRepository;
+import com.example.Mezbaan.database.models.*;
+import com.example.Mezbaan.database.repository.*;
 import com.example.Mezbaan.service.UserService;
+import com.example.Mezbaan.service.VenueBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +49,9 @@ public class UserController {
 
     @Autowired
     VenuesRepository venuesRepository;
+
+    @Autowired
+    VenueBookingService venueBookingService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody UserService.UserSignUpRequest request) {
@@ -162,5 +161,36 @@ public class UserController {
         response.put("totalPages", venuesPage.getTotalPages());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/requestBooking")
+    public ResponseEntity<Map<String, String>> requestBooking(VenueBookingService.AddVenueBooking request) {
+        try{
+            Map<String, String> response = new HashMap<>();
+
+            String ret = venueBookingService.requestBooking(request);
+
+            response.put("Message", ret);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/{userId}/getAllBookings")
+    public ResponseEntity<Map<String, UserService.GetAllBookingResponse>> getAllBooking(@PathVariable Integer userId) {
+        try {
+
+            Map<String, UserService.GetAllBookingResponse> response = new HashMap<>();
+
+            response.put("bookings", userService.getAllBookings(userId));
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

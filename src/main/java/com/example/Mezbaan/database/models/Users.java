@@ -26,7 +26,7 @@ public class Users {
 
     private String password;
 
-    public Users() {};
+    public Users() {}
 
     @Enumerated(EnumType.STRING)
     private Status status;

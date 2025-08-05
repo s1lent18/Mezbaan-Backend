@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
+@NoArgsConstructor
 @Getter @Setter
 @Entity
 @Table(name = "venues")
@@ -62,8 +64,6 @@ public class Venues {
     @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL)
     @JsonManagedReference("venue-amenities")
     private List<Amenities> amenities;
-
-    public Venues() {};
 
     public Venues(Vendor vendor, String name, String description, String address, Integer baseGuestCount, Integer capacity, String venueType, Integer priceDay,
                   Integer priceNight, Integer incStep, Integer incPrice, String locationLink, String managerName, String managerNumber

@@ -1,13 +1,16 @@
 package com.example.Mezbaan.service;
 
+import com.example.Mezbaan.database.models.Amenities;
 import com.example.Mezbaan.database.models.Vendor;
 import com.example.Mezbaan.database.models.Venues;
+import com.example.Mezbaan.database.repository.AmenitiesRepository;
 import com.example.Mezbaan.database.repository.VendorRepository;
 import com.example.Mezbaan.database.repository.VenuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +22,9 @@ public class VenuesService {
 
     @Autowired
     VendorRepository vendorRepository;
+
+    @Autowired
+    AmenitiesRepository amenitiesRepository;
 
     public static class AddVenue {
         public Integer vendorId;
@@ -35,11 +41,12 @@ public class VenuesService {
         public String locationLink;
         public String managerName;
         public String managerNumber;
+        public List<Amenities> amenities;
 
         public AddVenue(Integer vendorId, String name, String description, String address,
                                Integer baseGuestCount, Integer capacity, String venueType, Integer priceDay, Integer priceNight,
                                Integer incStep, Integer incPrice, String locationLink, String managerName,
-                               String managerNumber
+                               String managerNumber, List<Amenities> amenities
         ) {
             this.vendorId = vendorId;
             this.name = name;
@@ -55,6 +62,7 @@ public class VenuesService {
             this.locationLink = locationLink;
             this.managerName = managerName;
             this.managerNumber = managerNumber;
+            this.amenities = amenities;
         }
     }
 
@@ -62,6 +70,8 @@ public class VenuesService {
     public String addVenue(AddVenue request) {
 
         Vendor vendor = vendorRepository.findById(request.vendorId).orElseThrow(() -> new RuntimeException("Vendor Not Found"));
+
+        List<Amenities> saveAmenities = new ArrayList<>();
 
         Venues venue = new Venues(
             vendor,
@@ -80,7 +90,18 @@ public class VenuesService {
             request.managerNumber
         );
 
-        venuesRepository.save(venue);
+        Venues savedVenue = venuesRepository.save(venue);
+
+        for (Amenities amenity : request.amenities) {
+            Amenities it = new Amenities(
+                    amenity.getName(),
+                    amenity.getCost(),
+                    savedVenue
+            );
+            saveAmenities.add(it);
+        }
+
+        amenitiesRepository.saveAll(saveAmenities);
 
         return "Successfully Added Venue";
     }

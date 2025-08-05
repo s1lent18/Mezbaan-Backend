@@ -3,8 +3,10 @@ package com.example.Mezbaan.database.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter @Setter
 @Entity
 @Table(name = "caterers")
@@ -30,8 +32,6 @@ public class Caterers {
     @JoinColumn(name = "vendorid", nullable = false)
     @JsonBackReference
     private Vendor vendor;
-
-    public Caterers() {}
 
     public Caterers(Vendor vendor, String name, String address, String locationLink, Double rating, String coverImage) {
         this.name = name;
