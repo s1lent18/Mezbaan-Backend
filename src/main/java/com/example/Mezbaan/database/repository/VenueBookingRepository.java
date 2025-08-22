@@ -41,6 +41,6 @@ public interface VenueBookingRepository extends JpaRepository<VenueBooking, Inte
                     """,
             nativeQuery = true
     )
-    Integer doneBooking(@Param("ids") List<Integer> id);
+    void doneBooking(@Param("ids") List<Integer> id);
 
 }
