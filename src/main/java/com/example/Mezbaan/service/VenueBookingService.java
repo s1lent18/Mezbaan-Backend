@@ -7,8 +7,15 @@ import com.example.Mezbaan.database.repository.UsersRepository;
 import com.example.Mezbaan.database.repository.VenueBookingRepository;
 import com.example.Mezbaan.database.repository.VenuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class VenueBookingService {
@@ -74,5 +81,36 @@ public class VenueBookingService {
         venueBookingRepository.save(booking);
 
         return "Successfully Created the booking";
+    }
+
+    @Scheduled(cron = "59 59 23 * * ?")
+    public void processDailyBookings() {
+
+        List<VenueBooking> bookings = venueBookingRepository.findAll();
+
+        List<Integer> ids = new ArrayList<>();
+
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+
+        LocalTime now = LocalTime.now();
+        DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("h:mm a");
+
+        for (VenueBooking booking : bookings) {
+            String[] parts = booking.getTime().split("-");
+            String endStr   = parts[1].trim();
+
+            LocalTime endTime = LocalTime.parse(endStr, formatterTime);
+            LocalDate eventDate = LocalDate.parse(booking.getDateOfEvent(), formatterDate);
+
+            if (eventDate.isBefore(today) || (eventDate.isEqual(today) && now.isAfter(endTime))) {
+                ids.add(booking.getId());
+            }
+        }
+
+        if (!ids.isEmpty()) {
+            venueBookingRepository.doneBooking(ids);
+        }
     }
 }
