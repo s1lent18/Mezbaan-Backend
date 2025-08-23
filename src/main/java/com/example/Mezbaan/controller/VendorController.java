@@ -47,6 +47,9 @@ public class VendorController {
     @Autowired
     UserDetailsService userDetailsService;
 
+    @Autowired
+    VenueBookingService venueBookingService;
+
     @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody VendorService.VendorSignUpRequest request) {
 
@@ -241,6 +244,24 @@ public class VendorController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
+        }
+    }
+
+    @PostMapping("/{vendorId}/confirmBooking")
+    public ResponseEntity<Map<String, String>> confirmBooking(
+            @PathVariable Integer vendorId,
+            @RequestBody VenueBookingService.ConfirmBookingRequest request
+    ) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = venueBookingService.confirmBooking(request);
+
+            response.put("comments", r);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

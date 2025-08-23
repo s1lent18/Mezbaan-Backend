@@ -6,6 +6,9 @@ import com.example.Mezbaan.database.models.Venues;
 import com.example.Mezbaan.database.repository.UsersRepository;
 import com.example.Mezbaan.database.repository.VenueBookingRepository;
 import com.example.Mezbaan.database.repository.VenuesRepository;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -112,5 +115,21 @@ public class VenueBookingService {
         if (!ids.isEmpty()) {
             venueBookingRepository.doneBooking(ids);
         }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ConfirmBookingRequest {
+        public Integer id;
+        public String msg;
+    }
+
+    public String confirmBooking(ConfirmBookingRequest request) {
+        VenueBooking booking = venueBookingRepository.findById(request.id).orElseThrow(() -> new RuntimeException("Booking Not Found"));
+
+        venueBookingRepository.processBooking(request.id);
+
+        return request.msg;
     }
 }
