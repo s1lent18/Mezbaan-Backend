@@ -6,6 +6,7 @@ import com.example.Mezbaan.database.repository.*;
 import com.example.Mezbaan.service.UserService;
 import com.example.Mezbaan.service.VenueBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +50,9 @@ public class UserController {
 
     @Autowired
     VenuesRepository venuesRepository;
+
+    @Autowired
+    DecoratorsRepository decoratorsRepository;
 
     @Autowired
     VenueBookingService venueBookingService;
@@ -112,6 +116,7 @@ public class UserController {
         return ResponseEntity.ok(userService.findConnectedUsers());
     }
 
+    @Cacheable(value = "caterer", key = "#id")
     @GetMapping("/getCaterer")
     public ResponseEntity<Map<String, Object>> getCaterer(
             @RequestParam(defaultValue = "0") int page,
@@ -129,6 +134,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Cacheable(value = "photographer", key = "#id")
     @GetMapping("/getPhotographer")
     public ResponseEntity<Map<String, Object>> getPhotographers(
             @RequestParam(defaultValue = "0") int page,
@@ -146,6 +152,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Cacheable(value = "venues", key = "#id")
     @GetMapping("/getVenues")
     public ResponseEntity<Map<String, Object>> getVenues(
             @RequestParam(defaultValue = "0") int page,
@@ -156,6 +163,24 @@ public class UserController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("venues", venuesPage.getContent());
+        response.put("currentPage", venuesPage.getNumber());
+        response.put("totalItems", venuesPage.getTotalElements());
+        response.put("totalPages", venuesPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Cacheable(value = "decorator", key = "#id")
+    @GetMapping("/getDecorators")
+    public ResponseEntity<Map<String, Object>> getDecorators(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Decorators> venuesPage = decoratorsRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("decorators", venuesPage.getContent());
         response.put("currentPage", venuesPage.getNumber());
         response.put("totalItems", venuesPage.getTotalElements());
         response.put("totalPages", venuesPage.getTotalPages());
@@ -179,6 +204,7 @@ public class UserController {
         }
     }
 
+    @Cacheable(value = "bookings", key = "#id")
     @GetMapping("/{userId}/getAllBookings")
     public ResponseEntity<Map<String, UserService.GetAllBookingResponse>> getAllBooking(@PathVariable Integer userId) {
         try {
