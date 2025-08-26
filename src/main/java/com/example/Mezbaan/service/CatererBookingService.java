@@ -1,11 +1,7 @@
 package com.example.Mezbaan.service;
 
-import com.example.Mezbaan.database.models.Users;
-import com.example.Mezbaan.database.models.VenueBooking;
-import com.example.Mezbaan.database.models.Venues;
-import com.example.Mezbaan.database.repository.UsersRepository;
-import com.example.Mezbaan.database.repository.VenueBookingRepository;
-import com.example.Mezbaan.database.repository.VenuesRepository;
+import com.example.Mezbaan.database.models.*;
+import com.example.Mezbaan.database.repository.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -21,19 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class VenueBookingService {
+public class CatererBookingService {
 
     @Autowired
-    VenueBookingRepository venueBookingRepository;
+    CatererBookingRepository catererBookingRepository;
 
     @Autowired
-    VenuesRepository venuesRepository;
+    CaterersRepository caterersRepository;
 
     @Autowired
     UsersRepository usersRepository;
 
-    public static class AddVenueBooking {
-        public String type;
+    public static class AddCatererBooking {
         public String time;
         public Integer guests;
         public Integer price;
@@ -41,13 +35,12 @@ public class VenueBookingService {
         public Integer paid;
         public String dateOfAdvance;
         public String dateOfEvent;
-        public Integer venueId;
+        public Integer catererId;
         public Integer customerId;
 
-        public AddVenueBooking(String type, String time, Integer guests, Integer price, Integer advance,
-                               Integer paid, String dateOfAdvance, String dateOfEvent, Integer venueId, Integer customerId
+        public AddCatererBooking(String time, Integer guests, Integer price, Integer advance,
+                               Integer paid, String dateOfAdvance, String dateOfEvent, Integer catererId, Integer customerId
         ) {
-            this.type = type;
             this.time = time;
             this.guests = guests;
             this.price = price;
@@ -55,33 +48,32 @@ public class VenueBookingService {
             this.paid = paid;
             this.dateOfAdvance = dateOfAdvance;
             this.dateOfEvent = dateOfEvent;
-            this.venueId = venueId;
+            this.catererId = catererId;
             this.customerId = customerId;
         }
     }
 
     @Transactional
-    public String requestBooking(AddVenueBooking request) {
-        Venues venue = venuesRepository.findById(request.venueId)
+    public String requestBooking(AddCatererBooking request) {
+
+        Caterers caterers = caterersRepository.findById(request.catererId)
                 .orElseThrow(() -> new RuntimeException("Venue Not Found"));
 
         Users customer = usersRepository.findById(request.customerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        VenueBooking booking = new VenueBooking(
-                request.type,
+        CatererBooking booking = new CatererBooking(
+                caterers,
                 request.time,
                 request.guests,
                 request.price,
                 request.advance,
                 request.paid,
                 request.dateOfAdvance,
-                request.dateOfEvent,
-                venue,
-                customer
+                request.dateOfEvent
         );
 
-        venueBookingRepository.save(booking);
+        catererBookingRepository.save(booking);
 
         return "Successfully Created the booking";
     }
@@ -89,18 +81,17 @@ public class VenueBookingService {
     @Scheduled(cron = "59 59 23 * * ?")
     public void processDailyBookings() {
 
-        List<VenueBooking> bookings = venueBookingRepository.findAll();
+        List<CatererBooking> bookings = catererBookingRepository.findAll();
 
         List<Integer> ids = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-
         LocalTime now = LocalTime.now();
         DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("h:mm a");
 
-        for (VenueBooking booking : bookings) {
+        for (CatererBooking booking : bookings) {
             String[] parts = booking.getTime().split("-");
             String endStr   = parts[1].trim();
 
@@ -113,7 +104,7 @@ public class VenueBookingService {
         }
 
         if (!ids.isEmpty()) {
-            venueBookingRepository.doneBooking(ids);
+            catererBookingRepository.doneBooking(ids);
         }
     }
 
@@ -126,17 +117,17 @@ public class VenueBookingService {
     }
 
     public String confirmBooking(ConfirmBookingRequest request) {
-        venueBookingRepository.findById(request.id).orElseThrow(() -> new RuntimeException("Booking Not Found"));
+        catererBookingRepository.findById(request.id).orElseThrow(() -> new RuntimeException("Booking Not Found"));
 
-        venueBookingRepository.processBooking(request.id);
+        catererBookingRepository.processBooking(request.id);
 
         return request.msg;
     }
 
-    public String cancelBooking(VenueBookingService.ConfirmBookingRequest request) {
-        venueBookingRepository.findById(request.id).orElseThrow(() -> new RuntimeException("Booking Not Found"));
+    public String cancelBooking(ConfirmBookingRequest request) {
+        catererBookingRepository.findById(request.id).orElseThrow(() -> new RuntimeException("Booking Not Found"));
 
-        venueBookingRepository.cancelBooking(request.id);
+        catererBookingRepository.cancelBooking(request.id);
 
         return request.msg;
     }

@@ -3,6 +3,7 @@ package com.example.Mezbaan.controller;
 import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.*;
 import com.example.Mezbaan.database.repository.*;
+import com.example.Mezbaan.service.CatererBookingService;
 import com.example.Mezbaan.service.UserService;
 import com.example.Mezbaan.service.VenueBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -56,6 +58,9 @@ public class UserController {
 
     @Autowired
     VenueBookingService venueBookingService;
+
+    @Autowired
+    CatererBookingService catererBookingService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody UserService.UserSignUpRequest request) {
@@ -215,6 +220,42 @@ public class UserController {
 
             return ResponseEntity.ok(response);
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/{userId}/cancelBooking")
+    public ResponseEntity<Map<String, String>> cancelBooking(
+            @Param("userId") Integer userId,
+            @RequestBody VenueBookingService.ConfirmBookingRequest request
+    ) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = venueBookingService.cancelBooking(request);
+
+            response.put("comments", r);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/{userId}/cancelBooking")
+    public ResponseEntity<Map<String, String>> cancelBooking(
+            @Param("userId") Integer userId,
+            @RequestBody CatererBookingService.ConfirmBookingRequest request
+            ) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = catererBookingService.cancelBooking(request);
+
+            response.put("comments", r);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

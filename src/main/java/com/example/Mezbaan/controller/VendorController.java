@@ -50,6 +50,9 @@ public class VendorController {
     @Autowired
     VenueBookingService venueBookingService;
 
+    @Autowired
+    CatererBookingService catererBookingService;
+
     @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody VendorService.VendorSignUpRequest request) {
 
@@ -256,6 +259,24 @@ public class VendorController {
 
         try {
             String r = venueBookingService.confirmBooking(request);
+
+            response.put("comments", r);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/{vendorId}/confirmBooking")
+    public ResponseEntity<Map<String, String>> confirmBooking(
+            @PathVariable Integer vendorId,
+            @RequestBody CatererBookingService.ConfirmBookingRequest request
+    ) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = catererBookingService.confirmBooking(request);
 
             response.put("comments", r);
 

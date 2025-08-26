@@ -1,10 +1,13 @@
 package com.example.Mezbaan.database.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
@@ -20,10 +23,9 @@ public class CatererBooking {
     @JsonBackReference
     private Caterers caterers;
 
-    @OneToOne
-    @JoinColumn(name = "bookingid", nullable = false)
-    @JsonBackReference
-    private ItemBooking itemBooking;
+    @OneToMany(mappedBy = "bookingid", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ItemBooking> itemBookings;
 
     private String time;
 
@@ -42,4 +44,17 @@ public class CatererBooking {
     private String dateOfEvent;
 
     private String status;
+
+    public CatererBooking(Caterers caterers, String time, Integer guests,
+                          Integer price, Integer advance, Integer paid, String dateOfAdvance, String dateOfEvent)
+    {
+        this.caterers = caterers;
+        this.time = time;
+        this.guests = guests;
+        this.price = price;
+        this.advance = advance;
+        this.paid = paid;
+        this.dateOfAdvance = dateOfAdvance;
+        this.dateOfEvent = dateOfEvent;
+    }
 }

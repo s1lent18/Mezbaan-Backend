@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface VenueBookingRepository extends JpaRepository<VenueBooking, Integer> {
 
+    @Modifying
     @Query(
             value = """
                     UPDATE VENUEBOOKING
@@ -20,8 +21,9 @@ public interface VenueBookingRepository extends JpaRepository<VenueBooking, Inte
                     """,
             nativeQuery = true
     )
-    String processBooking(Integer id);
+    void processBooking(Integer id);
 
+    @Modifying
     @Query(
             value = """
                     UPDATE VENUEBOOKING
