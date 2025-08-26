@@ -209,6 +209,22 @@ public class UserController {
         }
     }
 
+    @PostMapping("/requestBooking")
+    public ResponseEntity<Map<String, String>> requestBooking(CatererBookingService.AddCatererBooking request) {
+        try{
+            Map<String, String> response = new HashMap<>();
+
+            String ret = catererBookingService.requestBooking(request);
+
+            response.put("Message", ret);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Cacheable(value = "bookings", key = "#id")
     @GetMapping("/{userId}/getAllBookings")
     public ResponseEntity<Map<String, UserService.GetAllBookingResponse>> getAllBooking(@PathVariable Integer userId) {

@@ -59,7 +59,7 @@ public class CatererBookingService {
         Caterers caterers = caterersRepository.findById(request.catererId)
                 .orElseThrow(() -> new RuntimeException("Venue Not Found"));
 
-        Users customer = usersRepository.findById(request.customerId)
+        usersRepository.findById(request.customerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         CatererBooking booking = new CatererBooking(
