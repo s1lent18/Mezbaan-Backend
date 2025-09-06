@@ -4,6 +4,7 @@ import com.example.Mezbaan.JWT.JwtUtil;
 import com.example.Mezbaan.database.models.*;
 import com.example.Mezbaan.database.repository.*;
 import com.example.Mezbaan.service.CatererBookingService;
+import com.example.Mezbaan.service.PhotographerBookingService;
 import com.example.Mezbaan.service.UserService;
 import com.example.Mezbaan.service.VenueBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,9 @@ public class UserController {
 
     @Autowired
     CatererBookingService catererBookingService;
+
+    @Autowired
+    PhotographerBookingService photographerBookingService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody UserService.UserSignUpRequest request) {
@@ -225,6 +229,22 @@ public class UserController {
         }
     }
 
+    @PostMapping("/requestBooking")
+    public ResponseEntity<Map<String, String>> requestBooking(PhotographerBookingService.AddPhotographerBooking request) {
+        try{
+            Map<String, String> response = new HashMap<>();
+
+            String ret = photographerBookingService.requestBooking(request);
+
+            response.put("Message", ret);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Cacheable(value = "bookings", key = "#id")
     @GetMapping("/{userId}/getAllBookings")
     public ResponseEntity<Map<String, UserService.GetAllBookingResponse>> getAllBooking(@PathVariable Integer userId) {
@@ -268,6 +288,24 @@ public class UserController {
 
         try {
             String r = catererBookingService.cancelBooking(request);
+
+            response.put("comments", r);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/{userId}/cancelBooking")
+    public ResponseEntity<Map<String, String>> cancelBooking(
+            @Param("userId") Integer userId,
+            @RequestBody PhotographerBookingService.ConfirmBookingRequest request
+    ) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String r = photographerBookingService.cancelBooking(request);
 
             response.put("comments", r);
 

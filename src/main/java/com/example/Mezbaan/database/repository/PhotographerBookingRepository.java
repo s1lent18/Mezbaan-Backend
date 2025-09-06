@@ -1,6 +1,6 @@
 package com.example.Mezbaan.database.repository;
 
-import com.example.Mezbaan.database.models.CatererBooking;
+import com.example.Mezbaan.database.models.PhotographerBooking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,12 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CatererBookingRepository extends JpaRepository<CatererBooking, Integer> {
+public interface PhotographerBookingRepository extends JpaRepository<PhotographerBooking, Integer> {
 
     @Modifying
     @Query(
             value = """
-                    UPDATE CATERERBOOKING
+                    UPDATE PHOTOGRAPHERBOOKING
                     SET STATUS = 'CONFIRMED'
                     WHERE ID = :id
                     """,
@@ -24,7 +24,7 @@ public interface CatererBookingRepository extends JpaRepository<CatererBooking, 
     @Modifying
     @Query(
             value = """
-                    UPDATE CATERERBOOKING
+                    UPDATE PHOTOGRAPHERBOOKING
                     SET STATUS = 'CANCELED'
                     WHERE ID = :id
                     """,
@@ -35,7 +35,7 @@ public interface CatererBookingRepository extends JpaRepository<CatererBooking, 
     @Modifying
     @Query(
             value = """
-                    UPDATE CATERERBOOKING
+                    UPDATE PHOTOGRAPHERBOOKING
                     SET STATUS = 'DONE'
                     WHERE ID = (:ids)
                     """,
