@@ -1,9 +1,8 @@
 package com.example.Mezbaan.service;
 
-import com.example.Mezbaan.database.models.Status;
-import com.example.Mezbaan.database.models.Users;
-import com.example.Mezbaan.database.models.VenueBooking;
+import com.example.Mezbaan.database.models.*;
 import com.example.Mezbaan.database.repository.UsersRepository;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,12 +25,12 @@ public class UserService {
 
     @Getter @Setter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetAllBookingResponse {
         List<VenueBooking> venueBookings;
-
-        GetAllBookingResponse(List<VenueBooking> venueBookings) {
-            this.venueBookings = venueBookings;
-        }
+        List<CatererBooking> catererBookings;
+        List<DecoratorBooking> decoratorBookings;
+        List<PhotographerBooking> photographerBookings;
     }
 
     @Getter @Setter
@@ -135,9 +134,15 @@ public class UserService {
         usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
 
         List<VenueBooking> venueBookings = usersRepository.findAllVenueBookings(userId);
+        List<CatererBooking> catererBookings = usersRepository.findAllCatererBookings(userId);
+        List<DecoratorBooking> decoratorBookings = usersRepository.findAllDecoratorBookings(userId);
+        List<PhotographerBooking> photographerBookings = usersRepository.findAllPhotographerBookings(userId);
 
         return new GetAllBookingResponse(
-                venueBookings
+                venueBookings,
+                catererBookings,
+                decoratorBookings,
+                photographerBookings
         );
     }
 }

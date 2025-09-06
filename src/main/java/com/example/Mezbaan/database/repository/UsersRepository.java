@@ -1,8 +1,6 @@
 package com.example.Mezbaan.database.repository;
 
-import com.example.Mezbaan.database.models.Status;
-import com.example.Mezbaan.database.models.Users;
-import com.example.Mezbaan.database.models.VenueBooking;
+import com.example.Mezbaan.database.models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,4 +24,22 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
            WHERE customerid = :userId
            """, nativeQuery = true)
     List<VenueBooking> findAllVenueBookings(Integer userId);
+
+    @Query(value = """
+           SELECT * FROM catererbooking
+           WHERE customerid = :userId
+           """, nativeQuery = true)
+    List<CatererBooking> findAllCatererBookings(Integer userId);
+
+    @Query(value = """
+           SELECT * FROM decoratorbooking
+           WHERE customerid = :userId
+           """, nativeQuery = true)
+    List<DecoratorBooking> findAllDecoratorBookings(Integer userId);
+
+    @Query(value = """
+           SELECT * FROM photographerbooking
+           WHERE customerid = :userId
+           """, nativeQuery = true)
+    List<PhotographerBooking> findAllPhotographerBookings(Integer userId);
 }
